@@ -15,11 +15,6 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private val PERMISSIONS_REQUEST_CODE = 100
-    private var mTimer: Timer? = null
-
-    // タイマー用の時間のための変数
-    private var mTimerSec = 0.0
-    private var mHandler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             // パーミッションの許可状態を確認する
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 // 許可されている
-                //getContentsInfo()
+                getContentsInfo()
             } else {
                 // 許可されていないので許可ダイアログを表示する
                 requestPermissions(
@@ -41,57 +36,34 @@ class MainActivity : AppCompatActivity() {
             }
             // Android 5系以下の場合
         } else {
-            //getContentsInfo()
+            getContentsInfo()
         }
 
-        if (mTimer == null) {
-            mTimer = Timer()
-            mTimer!!.schedule(object : TimerTask() {
-                override fun run() {
-                    mTimerSec += 0.1
-                    mHandler.post {
-                        getContentsInfo()
-                    }
-                }
-            }, 100, 1000) // 最初に始動させるまで100ミリ秒、ループの間隔を100ミリ秒 に設定
-        }
-    }
-
-/*        // 次へボタン押下
+        // 次へボタン押下
         prog_button.setOnClickListener {
-            if (mTimer == null) {
-                mTimer = Timer()
-                mTimer!!.schedule(object : TimerTask() {
-                    override fun run() {
-                        mTimerSec += 0.1
-                        mHandler.post {
-                            //timer.text = String.format("%.1f", mTimerSec)
-                        }
-                    }
-                }, 100, 100) // 最初に始動させるまで100ミリ秒、ループの間隔を100ミリ秒 に設定
-            }
+            Log.d("DEBUG_APP", "進むボタン押下")
+            getContentsInfo()
         }
 
         // 戻るボタン押下
         prev_button.setOnClickListener {
-            if (mTimer != null) {
-                mTimer!!.cancel()
-                mTimer = null
-            }
+            Log.d("DEBUG_APP", "戻るボタン押下")
+            getContentsInfo()
         }
 
         // 再生/停止ボタン押下
         playstop_button.setOnClickListener {
-            mTimerSec = 0.0
-            //timer.text = String.format("%.1f", mTimerSec)
+            Log.d("DEBUG_APP", "再生/停止ボタン押下")
+            getContentsInfo()
         }
     }
-*/
+
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             PERMISSIONS_REQUEST_CODE ->
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //getContentsInfo()
+                    getContentsInfo()
                 }
         }
     }
@@ -116,7 +88,6 @@ class MainActivity : AppCompatActivity() {
 
             imageView.setImageURI(imageUri)
             Log.d("DEBUG_APP", "URI : " + imageUri.toString())
-            cursor.moveToNext()
         }
         cursor.close()
     }
