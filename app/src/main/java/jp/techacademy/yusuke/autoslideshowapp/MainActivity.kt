@@ -39,23 +39,7 @@ class MainActivity : AppCompatActivity() {
             getContentsInfo()
         }
 
-        // 次へボタン押下
-        prog_button.setOnClickListener {
-            Log.d("DEBUG_APP", "進むボタン押下")
-            getContentsInfo()
-        }
 
-        // 戻るボタン押下
-        prev_button.setOnClickListener {
-            Log.d("DEBUG_APP", "戻るボタン押下")
-            getContentsInfo()
-        }
-
-        // 再生/停止ボタン押下
-        playstop_button.setOnClickListener {
-            Log.d("DEBUG_APP", "再生/停止ボタン押下")
-            getContentsInfo()
-        }
     }
 
 
@@ -70,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     // 画像の情報を取得する
     private fun getContentsInfo() {
+        var id = mutableListOf<Long>()
         val resolver = contentResolver
         val cursor = resolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // データの種類
@@ -80,14 +65,52 @@ class MainActivity : AppCompatActivity() {
         )
 
         if (cursor!!.moveToFirst()) {
+            // 全ての画像のidを取得
+            var i = 0
+            do {
+                // indexからIDを取得し、そのIDから画像のURIを取得する
+                val fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
+                Log.d("DEBUG_APP", "fieldIndex : " + fieldIndex.toString())
+                id.add(i,cursor.getLong(fieldIndex))
+                Log.d("DEBUG_APP", "id : " + id[i].toString())
+                i++
+            }while (cursor.moveToNext())
+            i = 0
 
-            // indexからIDを取得し、そのIDから画像のURIを取得する
-            val fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
-            val id = cursor.getLong(fieldIndex)
-            val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+            // 1つ目の画像を表示
+            val imageUri =
+                ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id[i])
 
             imageView.setImageURI(imageUri)
             Log.d("DEBUG_APP", "URI : " + imageUri.toString())
+
+            // 次へボタン押下
+            prog_button.setOnClickListener {
+                Log.d("DEBUG_APP", "進むボタン押下")
+                i = i + 1
+                val imageUri =
+                    ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id[i])
+
+                imageView.setImageURI(imageUri)
+                Log.d("DEBUG_APP", "URI : " + imageUri.toString())
+            }
+
+            // 戻るボタン押下
+            prev_button.setOnClickListener {
+                Log.d("DEBUG_APP", "戻るボタン押下")
+                i = i - 1
+                val imageUri =
+                    ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id[i])
+
+                imageView.setImageURI(imageUri)
+                Log.d("DEBUG_APP", "URI : " + imageUri.toString())
+            }
+
+            // 再生/停止ボタン押下
+            playstop_button.setOnClickListener {
+                Log.d("DEBUG_APP", "再生/停止ボタン押下")
+                
+            }
         }
         cursor.close()
     }
