@@ -81,14 +81,28 @@ class MainActivity : AppCompatActivity() {
             // 次へボタン押下
             prog_button.setOnClickListener {
                 Log.d("DEBUG_APP", "進むボタン押下")
-                i = i + 1
+
+                // 最後の画像だったら頭に
+                if(i == id.size - 1){
+                    i = 0
+                }
+                else {
+                    i++
+                }
                 showImage(id[i])
             }
 
             // 戻るボタン押下
             prev_button.setOnClickListener {
                 Log.d("DEBUG_APP", "戻るボタン押下")
-                i = i - 1
+
+                // 最初の画像の場合は末尾に
+                if (i == 0) {
+                    i = id.size - 1
+                }
+                else {
+                    i--
+                }
                 showImage(id[i])
             }
 
@@ -101,6 +115,7 @@ class MainActivity : AppCompatActivity() {
         cursor.close()
     }
 
+    // 画像表示
     private fun showImage(id:Long){
         val imageUri =
             ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
