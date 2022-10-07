@@ -78,11 +78,14 @@ class MainActivity : AppCompatActivity() {
             // 1つ目の画像を表示
             showImage(id[i])
 
+            // 再生中かどうか
+            var playing = false
+
             // 次へボタン押下
             prog_button.setOnClickListener {
                 Log.d("DEBUG_APP", "進むボタン押下")
 
-                // 最後の画像だったら頭に
+                // 最後の画像だったら頭に異動
                 if(i == id.size - 1){
                     i = 0
                 }
@@ -96,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             prev_button.setOnClickListener {
                 Log.d("DEBUG_APP", "戻るボタン押下")
 
-                // 最初の画像の場合は末尾に
+                // 最初の画像の場合は末尾に異動
                 if (i == 0) {
                     i = id.size - 1
                 }
@@ -110,6 +113,14 @@ class MainActivity : AppCompatActivity() {
             playstop_button.setOnClickListener {
                 Log.d("DEBUG_APP", "再生/停止ボタン押下")
 
+                if(playing == true) {   // 再生する
+                    playstop_button.text = "停止"
+                    playing = false
+                }
+                else{                   // 停止する
+                    playstop_button.text = "再生"
+                    playing = true
+                }
             }
         }
         cursor.close()
