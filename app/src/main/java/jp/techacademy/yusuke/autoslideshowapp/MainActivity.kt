@@ -38,8 +38,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             getContentsInfo()
         }
-
-
     }
 
 
@@ -52,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 画像の情報を取得する
+    // スライドショー
     private fun getContentsInfo() {
         var id = mutableListOf<Long>()
         val resolver = contentResolver
@@ -78,40 +76,36 @@ class MainActivity : AppCompatActivity() {
             i = 0
 
             // 1つ目の画像を表示
-            val imageUri =
-                ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id[i])
-
-            imageView.setImageURI(imageUri)
-            Log.d("DEBUG_APP", "URI : " + imageUri.toString())
+            showImage(id[i])
 
             // 次へボタン押下
             prog_button.setOnClickListener {
                 Log.d("DEBUG_APP", "進むボタン押下")
                 i = i + 1
-                val imageUri =
-                    ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id[i])
-
-                imageView.setImageURI(imageUri)
-                Log.d("DEBUG_APP", "URI : " + imageUri.toString())
+                showImage(id[i])
             }
 
             // 戻るボタン押下
             prev_button.setOnClickListener {
                 Log.d("DEBUG_APP", "戻るボタン押下")
                 i = i - 1
-                val imageUri =
-                    ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id[i])
-
-                imageView.setImageURI(imageUri)
-                Log.d("DEBUG_APP", "URI : " + imageUri.toString())
+                showImage(id[i])
             }
 
             // 再生/停止ボタン押下
             playstop_button.setOnClickListener {
                 Log.d("DEBUG_APP", "再生/停止ボタン押下")
-                
+
             }
         }
         cursor.close()
+    }
+
+    private fun showImage(id:Long){
+        val imageUri =
+            ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+
+        imageView.setImageURI(imageUri)
+        Log.d("DEBUG_APP", "URI : " + imageUri.toString())
     }
 }
