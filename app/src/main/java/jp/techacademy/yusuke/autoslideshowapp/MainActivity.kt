@@ -115,25 +115,25 @@ class MainActivity : AppCompatActivity() {
             playstop_button.setOnClickListener {
                 Log.d("DEBUG_APP", "再生/停止ボタン押下")
 
-                // 再生する
+                // 停止する
                 if(playing == true) {
                     playstop_button.text = "再生"
                     playing = false
 
                     // 先に進むボタンと前に戻るボタンを活性に
-                    prog_button.isClickable = true
-                    prev_button.isClickable = true
+                    prog_button.isEnabled = true
+                    prev_button.isEnabled = true
 
                     mTimer!!.cancel()
                 }
-                // 停止する
+                // 再生する
                 else{
                     playstop_button.text = "停止"
                     playing = true
 
                     // 先に進むボタンと前に戻るボタンを非活性に
-                    prog_button.isClickable = false
-                    prev_button.isClickable = false
+                    prog_button.isEnabled = false
+                    prev_button.isEnabled= false
 
                     // タイマーの作成
                     mTimer = Timer()
@@ -141,10 +141,7 @@ class MainActivity : AppCompatActivity() {
                     // タイマーの始動
                     mTimer!!.schedule(object : TimerTask() {
                         override fun run() {
-                            mTimerSec += 2
                             mHandler.post {
-                                Log.d("DEBUG_APP", "Timer : " + String.format("%.1f", mTimerSec))
-
                                 // 最後の画像だったら頭に移動
                                 if(i == id.size - 1){
                                     i = 0
