@@ -14,11 +14,15 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val PERMISSIONS_REQUEST_CODE = 100
+    private val PERMISSIONS_REQUEST_CODE = 100      // ストレージへのアクセス許可値
+    private var mTimer: Timer? = null
+    private var mTimerSec = 0.0                     // タイマー用の時間のための変数
+    private var mHandler = Handler()                // スレッドのハンドラー
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
         // 外部ストレージへのアクセス許可取得
         // Android 6.0以降の場合
@@ -52,7 +56,8 @@ class MainActivity : AppCompatActivity() {
 
     // スライドショー
     private fun getContentsInfo() {
-        var id = mutableListOf<Long>()
+        var id = mutableListOf<Long>()  // 画像idのリスト
+        var playing = false            // 再生中かどうか
         val resolver = contentResolver
         val cursor = resolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // データの種類
@@ -78,14 +83,11 @@ class MainActivity : AppCompatActivity() {
             // 1つ目の画像を表示
             showImage(id[i])
 
-            // 再生中かどうか
-            var playing = false
-
             // 次へボタン押下
             prog_button.setOnClickListener {
                 Log.d("DEBUG_APP", "進むボタン押下")
 
-                // 最後の画像だったら頭に異動
+                // 最後の画像だったら頭に移動
                 if(i == id.size - 1){
                     i = 0
                 }
@@ -99,7 +101,7 @@ class MainActivity : AppCompatActivity() {
             prev_button.setOnClickListener {
                 Log.d("DEBUG_APP", "戻るボタン押下")
 
-                // 最初の画像の場合は末尾に異動
+                // 最初の画像の場合は末尾に移動
                 if (i == 0) {
                     i = id.size - 1
                 }
@@ -113,13 +115,38 @@ class MainActivity : AppCompatActivity() {
             playstop_button.setOnClickListener {
                 Log.d("DEBUG_APP", "再生/停止ボタン押下")
 
-                if(playing == true) {   // 再生する
+                // 再生する
+                if(playing == true) {
                     playstop_button.text = "停止"
                     playing = false
+                    mTimer!!.cancel()
                 }
-                else{                   // 停止する
+                // 停止する
+                else{
                     playstop_button.text = "再生"
                     playing = true
+
+                    // タイマーの作成
+                    mTimer = Timer()
+
+                    // タイマーの始動
+                    mTimer!!.schedule(object : TimerTask() {
+                        override fun run() {
+                            mTimerSec += 2
+                            mHandler.post {
+                                Log.d("DEBUG_APP", "Timer : " + String.format("%.1f", mTimerSec))
+
+                                // 最後の画像だったら頭に移動
+                                if(i == id.size - 1){
+                                    i = 0
+                                }
+                                else {
+                                    i++
+                                }
+                                showImage(id[i])
+                            }
+                        }
+                    }, 2000, 2000) // 最初に始動させるまで2000ミリ秒、ループの間隔を2000ミリ秒 に設定
                 }
             }
         }
