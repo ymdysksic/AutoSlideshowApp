@@ -117,14 +117,23 @@ class MainActivity : AppCompatActivity() {
 
                 // 再生する
                 if(playing == true) {
-                    playstop_button.text = "停止"
+                    playstop_button.text = "再生"
                     playing = false
+
+                    // 先に進むボタンと前に戻るボタンを活性に
+                    prog_button.isClickable = true
+                    prev_button.isClickable = true
+
                     mTimer!!.cancel()
                 }
                 // 停止する
                 else{
-                    playstop_button.text = "再生"
+                    playstop_button.text = "停止"
                     playing = true
+
+                    // 先に進むボタンと前に戻るボタンを非活性に
+                    prog_button.isClickable = false
+                    prev_button.isClickable = false
 
                     // タイマーの作成
                     mTimer = Timer()
